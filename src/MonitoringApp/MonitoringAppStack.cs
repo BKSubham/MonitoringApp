@@ -36,6 +36,19 @@ namespace MonitoringApp
 
             // Give Lambda function permissions to read from S3 bucket
             bucket.GrantRead(crawlerFunction);
+
+            // Create an SNS topic
+            var topic = new Topic(this, "HighResponseTimeAlerts");
+
+            // Subscribe an email address to the SNS topic
+            var subscription = new EmailSubscription("dhunganaprajwol237@gmail.com"); // Replace with your email address
+            topic.AddSubscription(subscription);
+
+            // Grant Lambda function permissions to publish messages to SNS topic
+            topic.GrantPublish(crawlerFunction);
+
+            // Example usage: Trigger SNS notification from Lambda function
+            crawlerFunction.AddEnvironment("SNS_TOPIC_ARN", topic.TopicArn);
         }
     }
 }
