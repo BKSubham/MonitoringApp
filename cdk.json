@@ -1,5 +1,5 @@
 {
-  "app": "dotnet run --project src/MonitoringApp/MonitoringApp.csproj",
+  "app": "node bin/monitoring_app.js",
   "watch": {
     "include": [
       "**"
@@ -7,11 +7,11 @@
     "exclude": [
       "README.md",
       "cdk*.json",
-      "src/*/obj",
-      "src/*/bin",
-      "src/*.sln",
-      "src/*/GlobalSuppressions.cs",
-      "src/*/*.csproj"
+      "jest.config.js",
+      "package*.json",
+      "yarn.lock",
+      "node_modules",
+      "test"
     ]
   },
   "context": {
