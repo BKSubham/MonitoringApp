@@ -40,7 +40,7 @@ exports.handler = async function (event) {
     };
 
     // Iterate through the list of websites and make HTTP requests
-    //const results = [];
+    const results = [];
     for (const website of websites) {
       const result = await checkWebsite(website);
 
@@ -51,10 +51,10 @@ exports.handler = async function (event) {
       const latency = result.status === 200 ? result.responseTime : -1;
 
       // Push metrics to CloudWatch
-      await putMetric("Availability", website.name, availability);
-      await putMetric("Latency", website.name, latency);
+      await putMetric("Availability", website, availability);
+      await putMetric("Latency", website, latency);
 
-      // results.push(result);
+       results.push(result);
     }
 
     // Return the results
@@ -95,10 +95,10 @@ async function putMetric(metricName, websiteName, value) {
   try {
     await cloudwatch.putMetricData(params).promise();
     console.log(
-      "Successfully pushed metric ${metricName} for ${websiteName} to CloudWatch."
+      `Successfully pushed metric ${metricName} for ${websiteName} to CloudWatch.`
     );
   } catch (error) {
-    console.error("Error pushing metric to CloudWatch: ${error}");
+    console.error(`Error pushing metric to CloudWatch: ${error}`);
     throw error;
   }
 }
