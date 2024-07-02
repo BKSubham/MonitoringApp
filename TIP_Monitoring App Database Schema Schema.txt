@@ -1,0 +1,10 @@
+NotificationUsers (userID, Name, Email)
+
+Notification_Type (TypeID,Type) eg: Type (Metric): Duration, Error, Latency or any other things
+
+NotificationUserType (UserID, TypeID)
+
+NotificationMessage (ID, TypeID, Message_Content)
+
+Audit_Log (ID,TypeID,Message,Error, Timestamp, UserID)
+
