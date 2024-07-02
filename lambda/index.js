@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
 const https = require("https");
+const cloudwatch = new AWS.CloudWatch();
 
 exports.handler = async function (event) {
   const bucket = event.bucket;
@@ -17,27 +18,43 @@ exports.handler = async function (event) {
     // Helper function to make HTTP GET request using https module
     const checkWebsite = (website) => {
       return new Promise((resolve) => {
+        const startTime = Date.now();
         https
           .get(website, (res) => {
+            const responseTime = Date.now() - startTime;
             resolve({
               website,
               status: res.statusCode,
+              responseTime: responseTime,
             });
           })
           .on("error", (err) => {
             resolve({
               website,
               error: err.message,
+              status: -1,
+              responseTime: -1,
             });
           });
       });
     };
 
     // Iterate through the list of websites and make HTTP requests
-    const results = [];
+    //const results = [];
     for (const website of websites) {
       const result = await checkWebsite(website);
-      results.push(result);
+
+      // Example: Measure availability (status code check)
+      const availability = result.status === 200 ? 1 : 0;
+
+      // Example: Measure latency (response time)
+      const latency = result.status === 200 ? result.responseTime : -1;
+
+      // Push metrics to CloudWatch
+      await putMetric("Availability", website.name, availability);
+      await putMetric("Latency", website.name, latency);
+
+      // results.push(result);
     }
 
     // Return the results
@@ -54,3 +71,34 @@ exports.handler = async function (event) {
     };
   }
 };
+
+async function putMetric(metricName, websiteName, value) {
+  // Example function to put metric data to CloudWatch under custom namespace 'WebsiteMetrics'
+  const params = {
+    MetricData: [
+      {
+        MetricName: metricName,
+        Dimensions: [
+          {
+            Name: "Website",
+            Value: websiteName,
+          },
+        ],
+        Timestamp: new Date(),
+        Unit: metricName === "Latency" ? "Milliseconds" : "Count",
+        Value: value,
+      },
+    ],
+    Namespace: "WebsiteMetrics",
+  };
+
+  try {
+    await cloudwatch.putMetricData(params).promise();
+    console.log(
+      "Successfully pushed metric ${metricName} for ${websiteName} to CloudWatch."
+    );
+  } catch (error) {
+    console.error("Error pushing metric to CloudWatch: ${error}");
+    throw error;
+  }
+}
