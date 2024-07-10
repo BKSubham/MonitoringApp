@@ -2,6 +2,14 @@ const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
 const https = require("https");
 const cloudwatch = new AWS.CloudWatch();
+// Import metrics constants
+const {
+  METRICS_NAMESPACE,
+  METRIC_AVAILABILITY,
+  METRIC_LATENCY,
+  AVAILABILITY_THRESHOLD,
+  LATENCY_THRESHOLD,
+} = require("./metric");
 
 exports.handler = async function (event) {
   const bucket = event.bucket;
@@ -51,10 +59,10 @@ exports.handler = async function (event) {
       const latency = result.status === 200 ? result.responseTime : -1;
 
       // Push metrics to CloudWatch
-      await putMetric("Availability", website, availability);
-      await putMetric("Latency", website, latency);
+      await putMetric(METRIC_AVAILABILITY, website, availability);
+      await putMetric(METRIC_LATENCY, website, latency);
 
-       results.push(result);
+      results.push(result);
     }
 
     // Return the results
@@ -85,11 +93,11 @@ async function putMetric(metricName, websiteName, value) {
           },
         ],
         Timestamp: new Date(),
-        Unit: metricName === "Latency" ? "Milliseconds" : "Count",
+        Unit: metricName === METRIC_LATENCY ? "Milliseconds" : "Count",
         Value: value,
       },
     ],
-    Namespace: "WebsiteMetrics",
+    Namespace: METRICS_NAMESPACE,
   };
 
   try {
