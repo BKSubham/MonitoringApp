@@ -11,9 +11,9 @@ const {
   LATENCY_THRESHOLD,
 } = require("./metric");
 
-exports.handler = async function (event) {
-  const bucket = event.bucket;
-  const key = event.key;
+exports.handler = async function () {
+  const bucket = process.env.BUCKET_NAME;
+  const key = "website.json";
   try {
     const data = await s3.getObject({ Bucket: bucket, Key: key }).promise();
     const websites = JSON.parse(data.Body.toString("utf-8"));
