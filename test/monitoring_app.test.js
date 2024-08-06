@@ -1,17 +1,37 @@
-// const cdk = require('aws-cdk-lib');
-// const { Template } = require('aws-cdk-lib/assertions');
-// const MonitoringApp = require('../lib/monitoring_app-stack');
+const { App } = require('aws-cdk-lib');
+const { Template, Match } = require('aws-cdk-lib/assertions');
+const { MonitoringAppStack } = require('../lib/monitoring_app-stack');
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/monitoring_app-stack.js
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//   // WHEN
-//   const stack = new MonitoringApp.MonitoringAppStack(app, 'MyTestStack');
-//   // THEN
-//   const template = Template.fromStack(stack);
+describe('MonitoringAppStack', () => {
+  let app;
+  let stack;
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+  beforeAll(() => {
+    app = new App();
+    stack = new MonitoringAppStack(app, 'MyTestStack');
+  });
+
+  test('S3 Bucket is deployed', () => {
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      VersioningConfiguration: {
+        Status: 'Enabled',
+      },
+    });
+  });
+
+  test('Lambda Function is deployed', () => {
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      Handler: 'index.handler',
+      Runtime: 'nodejs16.x',
+      Environment: {
+        Variables: {
+          BUCKET_NAME: {
+            Ref: Match.anyValue(),
+          },
+        },
+      },
+    });
+  });
 });
