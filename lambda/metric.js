@@ -1,11 +1,11 @@
 // metrics.js
-const METRICS_NAMESPACE = 'MonitoringAppNamespace';
+const METRICS_NAMESPACE = "MonitoringAppNamespace";
 
-const METRIC_AVAILABILITY = 'WebsiteAvailability';
-const METRIC_LATENCY = 'WebsiteLatency';
+const METRIC_AVAILABILITY = "WebsiteAvailability";
+const METRIC_LATENCY = "WebsiteLatency";
 
 // Alarm thresholds
-const AVAILABILITY_THRESHOLD = 0.9; // Example: 90% availability
+const AVAILABILITY_THRESHOLD = 1; // Example: 100% availability
 const LATENCY_THRESHOLD = 300; // Example: 300 milliseconds
 
 module.exports = {
