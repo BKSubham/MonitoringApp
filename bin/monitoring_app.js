@@ -2,8 +2,12 @@
 
 const cdk = require('aws-cdk-lib');
 const { MonitoringAppStack } = require('../lib/monitoring_app-stack');
+const { PipelineStack } = require('../lib/pipeline-stack');
+
 
 const app = new cdk.App();
+new PipelineStack(app, 'PipelineStack');
+
 new MonitoringAppStack(app, 'MonitoringAppStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
@@ -19,3 +23,7 @@ new MonitoringAppStack(app, 'MonitoringAppStack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+
+
+
+
