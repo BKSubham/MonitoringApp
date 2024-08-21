@@ -42,6 +42,15 @@ retrieval.
  **CloudWatch Alarms**
 Description: These generate an alert when certain predefined thresholds are either exceeded or fallen below.
 Configuration: The alarms will be set up in CloudWatch against those metrics that need monitoring.
+
+
+**Notification Setup**:
+Configure CloudWatch to send notifications via SNS (Simple Notification Service) to an email address or other notification endpoints whenever an alarm is triggered.
+This ensures that you are immediately informed of any issues with the web crawler’s performance or the availability of the monitored websites.
+Testing the Alarms:
+Manually trigger some test scenarios (e.g., using a test URL that returns a 404 error) to ensure that the alarms are correctly configured and that notifications are being received as expected.
+By setting up these monitoring and alarm mechanisms, you will be able to maintain the operational health of your web crawler and ensure that it continues to function as intended.
+
  
 
 **DynamoDB**
@@ -77,6 +86,17 @@ MonitoringAppStack  with  administrator  privileges.
 The pipeline automates the process of downloading source code, developing
 the application, and delivering it, resulting in an efficient and consistent
 deployment methodology.
+
+**CI/CD Pipeline Prajwol:**
+Pipeline Configuration:
+Set up a multi-stage pipeline with Beta/Gamma and Prod stages.
+Include bake times for each deployment stage.
+Integrate code review processes.
+Implement test blockers to halt deployment if tests fail.
+Testing and Rollback:
+Write unit tests for individual components and integration tests for the web crawler.
+Automate rollback procedures to revert to a previous stable version if deployment issues are detected.
+
  
 **Running Instructions**
 Prerequisites to run the application
